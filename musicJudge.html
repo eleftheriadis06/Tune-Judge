@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tune Judge: Share your opinions on your favorite songs and discover new music!">
+    <meta name="keywords" content="Tune Judge, music reviews, song opinions, discover songs, music app">
+    <meta name="author" content="Your Name">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#000000">
+    <title>Tune Judge</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #searchBar {
+            padding: 10px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+            border: 2px solid #fff;
+            background-color: #333;
+            color: white;
+        }
+        .song-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 400px;
+        }
+        .song-item {
+            background-color: #444;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none; /* Hide all items initially */
+            position: relative;
+        }
+        .opinion-input {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            width: 80%;
+            margin-top: 10px;
+        }
+        .submit-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #888;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #aaa;
+        }
+        .comment {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        #noResultsMessage {
+            color: red;
+            margin-top: 20px;
+            font-size: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tune Judge</h1>
+    <input type="text" id="searchBar" placeholder="Search for a song..." onkeyup="filterSongs()" aria-label="Search for a song">
+    <ul class="song-list" id="songList">
+        <li class="song-item">
+            Wanna Be Startin' Somethin' - Michael Jackson
+            <input class="opinion-input" type="text" placeholder="Add your opinion..." onblur="saveOpinion(this)" aria-label="Add your opinion for Wanna Be Startin' Somethin'">
+            <button class="submit-btn" onclick="submitOpinion(this)">Submit Opinion</button>
+            <div class="comment"></div>
+        </li>
+        <li class="song-item">
+            Hotline Bling - Drake
+            <input class="opinion-input" type="text" placeholder="Add your opinion..." onblur="saveOpinion(this)" aria-label="Add your opinion for Hotline Bling">
+            <button class="submit-btn" onclick="submitOpinion(this)">Submit Opinion</button>
+            <div class="comment"></div>
+        </li>
+        <li class="song-item">
+            Killing Me Softly - The Fugees
+            <input class="opinion-input" type="text" placeholder="Add your opinion..." onblur="saveOpinion(this)" aria-label="Add your opinion for Killing Me Softly">
+            <button class="submit-btn" onclick="submitOpinion(this)">Submit Opinion</button>
+            <div class="comment"></div>
+        </li>
+        <li class="song-item">
+            Bling Bling - B.G.
+            <input class="opinion-input" type="text" placeholder="Add your opinion..." onblur="saveOpinion(this)" aria-label="Add your opinion for Bling Bling">
+            <button class="submit-btn" onclick="submitOpinion(this)">Submit Opinion</button>
+            <div class="comment"></div>
+        </li>
+        <li class="song-item">
+            Rebel Without a Pause - Public Enemy
+            <input class="opinion-input" type="text" placeholder="Add your opinion..." onblur="saveOpinion(this)" aria-label="Add your opinion for Rebel Without a Pause">
+            <button class="submit-btn" onclick="submitOpinion(this)">Submit Opinion</button>
+            <div class="comment"></div>
+        </li>
+    </ul>
+    <script>
+        function filterSongs() {
+            const searchQuery = document.getElementById("searchBar").value.toLowerCase();
+            const songList = document.getElementById("songList");
+            const songs = songList.getElementsByTagName("li");
+            let hasVisibleSongs = false;
+
+            for (let i = 0; i < songs.length; i++) {
+                const songText = songs[i].textContent.toLowerCase();
+                if (songText.includes(searchQuery)) {
+                    songs[i].style.display = "block";
+                    hasVisibleSongs = true;
+                } else {
+                    songs[i].style.display = "none";
+                }
+            }
+
+            // Display a "No Results" message if no songs are visible
+            const noResultsMessage = document.getElementById("noResultsMessage");
+            if (!hasVisibleSongs) {
+                if (!noResultsMessage) {
+                    const message = document.createElement('div');
+                    message.id = 'noResultsMessage';
+                    message.textContent = 'No results found.';
+                    songList.parentElement.appendChild(message);
+                }
+            } else if (noResultsMessage) {
+                noResultsMessage.remove();
+            }
+        }
+
+        function saveOpinion(inputField) {
+            const songItem = inputField.parentElement;
+            const songName = songItem.firstChild.textContent.trim();
+            const opinionText = inputField.value.trim();
+            const commentDiv = songItem.querySelector('.comment');
+
+            commentDiv.textContent = opinionText;
+
+            // Save to localStorage
+            if (opinionText) {
+                localStorage.setItem(songName, opinionText);
+            }
+        }
+
+        function submitOpinion(button) {
+            const songItem = button.parentElement;
+            const inputField = songItem.querySelector('.opinion-input');
+            saveOpinion(inputField); // Automatically save the opinion when submit is clicked
+            inputField.value = ''; // Clear the input field after submission
+        }
+
+        // Load opinions from localStorage
+        window.onload = function() {
+            const songs = document.querySelectorAll('.song-item');
+            songs.forEach(song => {
+                const songName = song.firstChild.textContent.trim();
+                const savedOpinion = localStorage.getItem(songName);
+                if (savedOpinion) {
+                    const commentDiv = song.querySelector('.comment');
+                    commentDiv.textContent = savedOpinion;
+                }
+            });
+        };
+    </script>
+</body>
+</html>
